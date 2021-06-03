@@ -1,0 +1,34 @@
+This script is tested in JetPack 4.5.1
+
+1. Pull docker image
+sudo docker pull nvcr.io/nvidia/l4t-ml:r32.5.0-py3
+
+2. Download yolov5 repository
+sudo git clone https://github.com/ultralytics/yolov5
+cd ..
+mv yolov5/ standard
+mkdir pytorch_hub
+
+3. Create docker container
+xhost +
+
+sudo docker run -it --gpus all --device=/dev/video0:/dev/video0 -v /home/xavier/vincent-dev/docker_ws/YOLOv5_ws:/yolov5 -e DISPLAY=:0 -v /tmp/.X11-unix:/tmp/.X11-unix -p 1000:8888 nvcr.io/nvidia/l4t-ml:r32.5.0-py3
+
+cd yolov5/standard
+apt update
+apt install nano
+
+4. Disable some dependencies in yolov5/standard/requirement.txt
+Comment opencv,torch and torch vision,then
+pip3 install -r requirments.txt
+pip3 install tqdm
+apt-get install python3-tk
+
+5. Unlock python3.7 version limit
+Go to standard/utils/general.py and serach for check_python(). Change minimum=3.7.0 to 3.6.0
+
+6. Cannot display issue
+Outside the container -> echo $DISPLAY
+Inside the container -> export DISPLAY =:1
+*If the value of DISPLAY outside the container is  :=1
+
